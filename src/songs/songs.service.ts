@@ -19,7 +19,9 @@ export class SongsService {
   ) {}
 
   async paginate(options: IPaginationOptions): Promise<Pagination<Song>> {
-    return await paginate<Song>(this.songRepository, options);
+    const queryBuilder = this.songRepository.createQueryBuilder('song');
+    queryBuilder.orderBy('song.releaseDate', 'DESC');
+    return await paginate<Song>(queryBuilder, options);
   }
 
   async create(songDTO: CreateSongDTO): Promise<Song> {
