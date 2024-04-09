@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put } from '@nestjs/common';
 import { SongsService } from './songs.service';
 import { CreateSongDTO } from './dto/create-song-dto';
 
@@ -7,7 +7,13 @@ export class SongsController {
     constructor(private songsService: SongsService){}
     @Get()
     findAll(){
-        return this.songsService.findAll();
+        try {
+            return this.songsService.findAll();
+        } catch (error) {
+            throw new HttpException("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR,{
+                cause: error
+            });
+        }
     }
 
     @Get('/:id')
