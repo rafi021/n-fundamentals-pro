@@ -51,6 +51,11 @@ export class SongsController {
       return this.songsService.paginate({
         page,
         limit,
+        route: 'http://localhost:3000' + '/songs',
+        routingLabels: {
+          limitLabel: 'page-size', // default: limit
+          pageLabel: 'current-page', //default: page
+        },
       });
     } catch (error) {
       throw new HttpException(
