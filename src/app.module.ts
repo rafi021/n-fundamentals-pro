@@ -12,6 +12,7 @@ import { SongsController } from './songs/songs.controller';
 import { DevConfigService } from './common/providers/DevConfigService';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
+import { Song } from './songs/song.entity';
 
 @Module({
   imports: [
@@ -22,7 +23,8 @@ import { DataSource } from 'typeorm';
       username: 'postgres',
       password: 'postgres',
       database: 'mediumclone',
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      // entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      entities: [Song],
       synchronize: true,
     }),
     SongsModule,
