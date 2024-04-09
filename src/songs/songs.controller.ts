@@ -14,18 +14,29 @@ import {
 import { SongsService } from './songs.service';
 import { CreateSongDTO } from './dto/create-song-dto';
 import { Connection } from 'src/common/constants/connection';
+import { Song } from './song.entity';
+import { UpdateSongDTO } from './dto/update-song-dto';
+import { UpdateResult } from 'typeorm';
 
 @Controller('songs')
 export class SongsController {
-  constructor(
-    private songsService: SongsService,
-    @Inject('CONNECTION')
-    private connection: Connection,
-  ) {
-    console.log(this.connection);
+  constructor(private songsService: SongsService) {}
+  @Post()
+  create(@Body() createSongDTO: CreateSongDTO): Promise<Song> {
+    try {
+      return this.songsService.create(createSongDTO);
+    } catch (error) {
+      throw new HttpException(
+        'Internal Server Error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        {
+          cause: error,
+        },
+      );
+    }
   }
   @Get()
-  findAll() {
+  findAll(): Promise<Song[]> {
     try {
       return this.songsService.findAll();
     } catch (error) {
@@ -39,30 +50,21 @@ export class SongsController {
     }
   }
 
-  @Get('/:id')
-  findOne(
-    // @Param('id', ParseIntPipe) // option: 1
-    @Param(
-      'id',
-      new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
-    )
-    id: number,
-  ) {
-    return id;
+  @Get(':id')
+  findOne(@Param('id', ParseIntPipe) id: number): Promise<Song> {
+    return this.songsService.findOne(id);
   }
 
-  @Post()
-  create(@Body() createSongDTO: CreateSongDTO) {
-    return this.songsService.create(createSongDTO);
+  @Put(':id')
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateSongDTO: UpdateSongDTO,
+  ): Promise<UpdateResult> {
+    return this.songsService.update(id, updateSongDTO);
   }
 
-  @Put('/:id')
-  update(@Param('id') id: string) {
-    return `update a song with id: ${id}`;
-  }
-
-  @Delete('/:id')
-  delete(@Param('id') id: string) {
-    return `delete a song with id: ${id}`;
+  @Delete(':id')
+  delete(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    return this.songsService.remove(id);
   }
 }
