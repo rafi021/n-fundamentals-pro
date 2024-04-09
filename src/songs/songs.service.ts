@@ -1,11 +1,16 @@
 import { Injectable, Scope } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Song } from './song.entity';
+import { Repository } from 'typeorm';
 
 @Injectable({
   scope: Scope.TRANSIENT
 })
 export class SongsService {
-  // local db
-  // local query
+  constructor(
+    @InjectRepository(Song)
+    private songRepository: Repository<Song>,
+  ){}
 
   private readonly songs = [];
 
